@@ -155,7 +155,7 @@ class TicTacToe:
 
     def play_game(self):
         # TODO: Play game
-        #uses all the methods up above to run the game untill a tie or a winner
+        #uses all the methods up above to run the game until a tie or a winner
         self.print_instructions()
         self.print_board()
         play = True
@@ -167,7 +167,7 @@ class TicTacToe:
             if self.check_win(player):
                 print("Player " + player + " won!")
                 play = False
-            if self.check_tie():
+            elif self.check_tie():
                 print("Tie")
                 play = False
 
