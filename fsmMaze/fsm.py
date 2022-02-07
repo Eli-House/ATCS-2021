@@ -10,15 +10,18 @@ the next state will be. The FSM has a table of transitions that associate the tu
 Where "action" is a function you define. The symbols and states can be any
 objects. You use the add_transition() method to add to the transition table.
 
-@author: Ms. Namasivayam (TODO: replace with your name)
+@author: Eli Housenbold (TODO: replace with your name)
 @version: 2022
 """
+import sys
 
 
 class FSM:
     def __init__(self, initial_state):
         # TODO: Initialize state transitions and current state
         # Dictionary (input_symbol, current_state) --> (action, next_state).
+        self.current_state = initial_state
+        self.state_transitions = {}
 
     def add_transition(self, input_symbol, state, action=None, next_state=None):
         """
@@ -32,6 +35,11 @@ class FSM:
         The next_state may be set to None in which case the current state will be unchanged.
         """
 
+        if next_state is None:
+            next_state = state
+        self.state_transitions[(input_symbol, state)] = (action, next_state)
+
+
     def get_transition(self, input_symbol, state):
         """
         TODO: Implement get transition
@@ -39,6 +47,11 @@ class FSM:
         Normally you do not call this method directly. It is called by
         process().
         """
+        try:
+         return self.state_transitions[(input_symbol, state)]
+        except KeyError:
+            print("Error: ", (input_symbol, state), " not found in FSM")
+            sys.exit(1)
 
     def process(self, input_symbol):
         """
@@ -50,3 +63,8 @@ class FSM:
         is not called and only the current state is changed. This method
         processes one complete input symbol.
         """
+
+        (action, next_state) = self.get_transition(input_symbol, self.current_state)
+        if action is not None:
+            action()
+        self.current_state = next_state
