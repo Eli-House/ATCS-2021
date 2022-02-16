@@ -4,6 +4,7 @@ class TicTacToe:
         # TODO: Set up the board to be '-'
         #fills a 2d array with - which represnts open spot
         self.board = [["-" for i in range(3)] for j in range(3)]
+        #self.board = [["X", "O", "X"], ["O", "O", "X"], ["O", "X", "-"]]
 
 
     def print_instructions(self):
@@ -39,15 +40,27 @@ class TicTacToe:
         # TODO: Ask the user for a row, col until a valid response
         #  is given them place the player's icon in the right spot
         #Asks user for input. If the input is invalid it will ask again until input is valid
-            r = int(input("Enter a row: "))
-            c = int(input("Enter a column: "))
+            while True:
+                try:
+                    r = int(input("Enter a row: "))
+                    c = int(input("Enter a column: "))
+                except ValueError:
+                    print("do not enter letters")
+                    continue
+                else:
+                    if self.is_valid_move(r, c):
+                        break
+                    print("invalid move please try again")
+            self.place_player(player, r, c)
+            """
             x = bool(self.is_valid_move(r, c))
             while x is False:
                 print("invalid move please try again")
                 r = int(input("Enter a row: "))
                 c = int(input("Enter a column: "))
                 x = bool(self.is_valid_move(r, c))
-            self.place_player(player, r, c)
+            """
+            # self.place_player(player, r, c)
 
     def take_random_turn(self, player):
         r = random.randint(0,2)
@@ -65,7 +78,7 @@ class TicTacToe:
         if player == "X":
             self.take_manual_turn(player)
         else:
-            self.take_random_turn(player)
+            self.take_minimax_turn(player)
 
     def check_col_win(self, player):
         # TODO: Check col win
@@ -79,19 +92,16 @@ class TicTacToe:
                 colZero = colZero + 1
         if colZero == 3:
             return True
-
         for i in range (3):
             if self.board[i][1] == player:
                 colOne = colOne + 1
         if colOne == 3:
             return True
-
         for i in range (3):
             if self.board[i][2] == player:
                 colTwo = colTwo + 1
         if colTwo == 3:
             return True
-
         return False
 
     def check_row_win(self, player):
@@ -111,13 +121,11 @@ class TicTacToe:
                 rowOne = rowOne + 1
         if rowOne == 3:
             return True
-
         for i in range(3):
             if self.board[2][i] == player:
                 rowTwo = rowTwo + 1
         if rowTwo == 3:
             return True
-
         return False
 
     def check_diag_win(self, player):
@@ -125,7 +133,6 @@ class TicTacToe:
         # sees if a player wins by have 3 in a row in a diagonal line
         if self.board[0][0] == player and self.board[1][1] == player and self.board[2][2] == player:
             return True
-
         if self.board[2][0] == player and self.board[1][1] == player and self.board[0][2] == player:
             return True
         return False
@@ -140,11 +147,56 @@ class TicTacToe:
     def check_tie(self):
         # TODO: Check tie
         #Checks to see if there are no more spaces left
+        if self.check_win("X") == True or self.check_win("O") == True:
+           return False
         for i in range(3):
             for j in range(3):
                 if self.board[i][j] == "-":
                     return False
         return True
+
+    def minimax(self, player):
+        if self.check_tie() == True:
+            return 0, None, None
+        if self.check_win(player) == True:
+            if player == "O":
+                return 10, None, None
+            elif player == "X":
+                return -10, None, None
+        if player == "O":
+            best = -10
+            opt_row = -1
+            opt_col = -1
+            for r in range(3):
+                for c in range(3):
+                    if self.is_valid_move(r, c) == True:
+                        self.place_player("O", r, c)
+                        score = self.minimax("X")[0]
+                        self.place_player("-", r, c)
+                        if best < score:
+                            best = score
+                            opt_row = r
+                            opt_col = c
+            return best, opt_row, opt_col
+        if player == "X":
+            worst = 10
+            opt_row = -1
+            opt_col = -1
+            for r in range(3):
+                for c in range(3):
+                    if self.is_valid_move(r, c) == True:
+                        self.place_player("X", r, c)
+                        score = self.minimax("O")[0]
+                        self.place_player("-", r, c)
+                        if worst > score:
+                            worst = score
+                            opt_row = r
+                            opt_col = c
+
+            return worst, opt_row, opt_col
+    def take_minimax_turn(self, player):
+        score, row, col = self.minimax(player)
+        self.place_player(player, row, col)
 
     def change_player(self, player):
         # This switches who's turn it is
