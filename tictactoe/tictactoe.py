@@ -81,8 +81,8 @@ class TicTacToe:
             self.take_manual_turn(player)
         else:
             start = time.time()
-            self.take_minimax_turn(player, 10)
-            #self.take_minimax_alpha_beta_turn(player, 10, -100, 100)
+            #self.take_minimax_turn(player, 10)
+            self.take_minimax_alpha_beta_turn(player, 10, -100, 100)
             end = time.time()
             print("This turn took:", end - start, "seconds")
 
@@ -219,7 +219,7 @@ class TicTacToe:
                 for c in range(3):
                     if self.is_valid_move(r, c) == True:
                         self.place_player("O", r, c)
-                        score = self.minimax("X", depth - 1)[0]
+                        score = self.minimax_alpha_beta("X", depth - 1, alpha, beta)[0]
                         self.place_player("-", r, c)
                         if best < score:
                             if score < alpha:
@@ -238,7 +238,7 @@ class TicTacToe:
                 for c in range(3):
                     if self.is_valid_move(r, c) == True:
                         self.place_player("X", r, c)
-                        score = self.minimax("O", depth - 1)[0]
+                        score = self.minimax_alpha_beta("O", depth - 1, alpha, beta)[0]
                         self.place_player("-", r, c)
                         if worst > score:
                             if score < beta:
