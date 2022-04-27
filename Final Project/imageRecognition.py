@@ -1,26 +1,36 @@
 # import libraries
 import cv2
 import numpy as np
+import pandas as pd
 
 # Load image
-img = cv2.imread("img/multiCircles.jpeg")
-#img = cv2.imread("img/eye.jpeg")
-#img = cv2.imread("img/car.jpeg")
-#img = cv2.imread("img/basketball.jpeg")
+def loadImage(filename):
+    image = cv2.imread(filename)
+    return image
+
+def changeImage(image):
+    # Convert image into gray scale
+    grayImg = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    # Blur the gray version of your image
+    grayImageBlurred = cv2.blur(grayImg, (5,5))
+    return grayImageBlurred
+
+def showImage(title, image, seconds):
+    # print out image
+    cv2.imshow(title, image)
+    # Close window after a certain amount of seconds
+    # 0 = until program is stopped.
+    cv2.waitKey(seconds)
+    cv2.destroyAllWindow()
 
 
-# Convert image into gray scale
-gImg = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-
-# Blur image
-gCirBlurred = cv2.blur(gImg, (5,5))
-
+# Load, gray scale, and blur image
+img = loadImage("img/eye.jpeg")
+gib = changeImage(img)
 # Apply Hough transform on the blurred image.
-locatedCircles = cv2.HoughCircles(gCirBlurred, cv2.HOUGH_GRADIENT, 1, 100, param1=100, param2=50, minRadius=1, maxRadius=500)
-
-# Only highlight detected circles if any circle i located in image
+locatedCircles = cv2.HoughCircles(gib, cv2.HOUGH_GRADIENT, 1, 100, param1=100, param2=50, minRadius=1, maxRadius=500)
+# Only highlight detected circles if any circle is located in image
 if locatedCircles is not None:
-    # Convert the circle parameters a, b and r to integers.
     locatedCircles = np.uint16(np.around(locatedCircles))
     for i in locatedCircles[0, :]:
         # Find middle and radius of circles
@@ -31,11 +41,6 @@ if locatedCircles is not None:
         # Draw a dot or a circle with a radius of one in the center of each circle
         cv2.circle(img, middle, 1, (255, 0, 0), 3)
 
-# print out image
-cv2.imshow("Circle", img)
 
-# Close window after a certain amount of seconds
-# 0 = until program is stopped.
-cv2.waitKey(0)
-cv2.destroyAllWindow()
-
+#Show image
+showImage("Eye", img, 0)
