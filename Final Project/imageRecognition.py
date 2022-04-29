@@ -1,12 +1,18 @@
 # import libraries
 import cv2
 import numpy as np
+import glob
 import pandas as pd
 
 # Load image
 def loadImage(filename):
     image = cv2.imread(filename)
     return image
+
+def loadFolder(path):
+    folder = glob.glob(path)
+    return folder
+
 
 def changeImage(image):
     # Convert image into gray scale
@@ -42,5 +48,10 @@ if locatedCircles is not None:
         cv2.circle(img, middle, 1, (255, 0, 0), 3)
 
 
-#Show image
-showImage("Eye", img, 0)
+# Show image
+# showImage("Eye", img, 0)
+
+# Test for reading a folder
+x = loadFolder("./withMask/*.png")[75]
+y = loadImage(x)
+showImage("test", y, 0)
