@@ -52,6 +52,6 @@ if locatedCircles is not None:
 # showImage("Eye", img, 0)
 
 # Test for reading a folder
-x = loadFolder("./withMask/*.png")[75]
-y = loadImage(x)
-showImage("test", y, 0)
+maskFolder = loadFolder("./withMask/*.png")[75]
+singlePhoto = loadImage(maskFolder)
+showImage("test", singlePhoto, 0)
