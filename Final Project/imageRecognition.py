@@ -13,7 +13,6 @@ def loadFolder(path):
     folder = glob.glob(path)
     return folder
 
-
 def changeImage(image):
     # Convert image into gray scale
     grayImg = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
@@ -47,11 +46,22 @@ if locatedCircles is not None:
         # Draw a dot or a circle with a radius of one in the center of each circle
         cv2.circle(img, middle, 1, (255, 0, 0), 3)
 
+# Face detection using open CV libraries
+cPath = "haarcascade_frontalface_default.xml"
+faceCascade = cv2.CascadeClassifier(cPath)
+faceImg = loadImage("img/ACDC.jpeg")
+grayFaceImg = changeImage(faceImg)
+faces = faceCascade.detectMultiScale(grayFaceImg, scaleFactor=1.1, minNeighbors=5, minSize=(30, 30))
+
+# Draw rectangles around faces
+for (x, y, w, h) in faces:
+    cv2.rectangle(faceImg, (x, y), (x+w, y+h), (167, 200, 45), 2)
+showImage("Find Faces", faceImg, 0)
 
 # Show image
 # showImage("Eye", img, 0)
 
 # Test for reading a folder
-maskFolder = loadFolder("./withMask/*.png")[75]
-singlePhoto = loadImage(maskFolder)
-showImage("test", singlePhoto, 0)
+#maskFolder = loadFolder("./withMask/*.png")[75]
+#singlePhoto = loadImage(maskFolder)
+#showImage("test", singlePhoto, 0)
