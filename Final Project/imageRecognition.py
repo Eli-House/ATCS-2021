@@ -47,16 +47,28 @@ if locatedCircles is not None:
         cv2.circle(img, middle, 1, (255, 0, 0), 3)
 
 # Face detection using open CV libraries
+
 cPath = "haarcascade_frontalface_default.xml"
 faceCascade = cv2.CascadeClassifier(cPath)
-faceImg = loadImage("img/ACDC.jpeg")
-grayFaceImg = changeImage(faceImg)
-faces = faceCascade.detectMultiScale(grayFaceImg, scaleFactor=1.1, minNeighbors=5, minSize=(30, 30))
 
-# Draw rectangles around faces
-for (x, y, w, h) in faces:
-    cv2.rectangle(faceImg, (x, y), (x+w, y+h), (167, 200, 45), 2)
-showImage("Find Faces", faceImg, 0)
+video_capture = cv2.VideoCapture(0)
+
+while True:
+    ret, webCam = video_capture.read()
+    # faceImg = loadImage("img/ACDC.jpeg")
+    grayFaceImg = changeImage(webCam)
+    faces = faceCascade.detectMultiScale(grayFaceImg, scaleFactor=1.1, minNeighbors=5, minSize=(30, 30))
+
+    # Draw rectangles around detected faces
+    for (x, y, w, h) in faces:
+        cv2.rectangle(webCam, (x, y), (x+w, y+h), (167, 200, 45), 2)
+    #showImage("Faces", webCam, 0)
+    cv2.imshow('Video', webCam)
+
+    if cv2.waitKey(1) & 0xFF == ord('q'):
+        break
+video_capture.release()
+cv2.destroyAllWindows()
 
 # Show image
 # showImage("Eye", img, 0)
